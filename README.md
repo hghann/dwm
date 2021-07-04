@@ -17,7 +17,9 @@ Afterwards enter the following command to build and install dwm (if
 necessary as root):
 
 ```
-make clean install
+git clone https://github.com/worthyox/dwm
+cd dwm
+sudo make clean install
 ```
 
 ## Running dwm
@@ -49,21 +51,25 @@ exec dwm
 ```
 
 
-Configuration
--------------
+## Configuration
+
 The configuration of dwm is done by creating a custom config.h
 and (re)compiling the source code.
 
 
 ## Patches and features
 
-- fullgaps: adds gaps between client windows. It is similar to gaps, but contains additional functionality.
-- swallow patch: if a program run from a terminal would make it inoperable, it temporarily takes its place to save space.
+- swallow: if a program run from a terminal would make it inoperable, it temporarily takes its place to save space.
+- fullgaps: adds gaps between client windows. Similar to gaps, but contains additional functionality.
+- shiftview: function to shift current view left/right.
+- movestack: move windows up and down in the master and stack layout.
+- sticky: easily make a client visible on all tags (make it "sticky").
+- actualfullscreen: actually toggle fullscreen instead of hiding the bar and entering monocle layout.
 
 
 ## Notes
 
 After applying various gap patchs it seems that some terminals like
 st are unable to expand to fill arbitrary space on the screen. When
-resizehints are on, space is left around the window.
+resizehints is set to 1, space is left around the window.
 (Source: https://dwm.suckless.org/faq)

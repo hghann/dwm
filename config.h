@@ -32,11 +32,12 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
-	{ "Gimp",    NULL,     NULL,           0,         1,          0,           0,        -1 },
-	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
-	{ TERMCLASS, NULL,     NULL,           0,         0,          1,           0,        -1 },
-	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
+	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor	scratchkey */
+	{ "Gimp",    NULL,     NULL,           0,         1,          0,           0,        -1,	0 },
+	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1,	0 },
+	{ TERMCLASS, NULL,     NULL,           0,         0,          1,           0,        -1,	0 },
+	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1,	0 }, /* xev */
+	{ NULL,      NULL,     "scratchpad",   0,         1,          -1,          0,        -1,	's' },
 };
 
 /* layout(s) */
@@ -66,6 +67,8 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "st", NULL };
+/*First arg only serves to match against key in rules*/
+static const char *scratchpadcmd[] = {"s", "st", "-t", "scratchpad", NULL}; 
 
 #include <X11/XF86keysym.h>
 #include "shiftview.c"
@@ -104,6 +107,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_space,  			togglefloating, 	{0} },
 	{ MODKEY,                       XK_s,      			togglesticky,   	{0} },
 	{ MODKEY|ShiftMask,             XK_f,      			togglefullscr,  	{0} },
+	{ MODKEY,                       XK_grave,  			togglescratch,  	{.v = scratchpadcmd } },
 	{ MODKEY,                       XK_0,      			view,           	{.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      			tag,            	{.ui = ~0 } },
 	{ MODKEY,                       XK_comma,  			focusmon,       	{.i = -1 } },

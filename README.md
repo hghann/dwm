@@ -1,15 +1,15 @@
-dwm - dynamic window manager
-============================
+## dwm - dynamic window manager
+
 dwm is an extremely fast, small, and dynamic window manager for X.
 
 
-Requirements
-------------
+## Requirements
+
 In order to build dwm you need the Xlib header files.
 
 
-Installation
-------------
+## Installation
+
 Edit config.mk to match your local setup (dwm is installed into
 the /usr/local namespace by default).
 
@@ -20,8 +20,8 @@ necessary as root):
 make clean install
 ```
 
-Running dwm
------------
+## Running dwm
+
 Add the following line to your .xinitrc to start dwm using startx:
 
 ```
@@ -43,7 +43,7 @@ like this in your .xinitrc:
 ```
 while xsetroot -name "`date` `uptime | sed 's/.*,//'`"
 do
-	sleep 1
+    sleep 1
 done &
 exec dwm
 ```
@@ -55,8 +55,13 @@ The configuration of dwm is done by creating a custom config.h
 and (re)compiling the source code.
 
 
-Notes
------
+## Patches and features
+
+- swallow patch: if a program run from a terminal would make it inoperable, it temporarily takes its place to save space.
+
+
+## Notes
+
 After applying various gap patchs it seems that some terminals like
 st are unable to expand to fill arbitrary space on the screen. When
 resizehints are on, space is left around the window.

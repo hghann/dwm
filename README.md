@@ -57,6 +57,7 @@ and (re)compiling the source code.
 
 ## Patches and features
 
+- fullgaps: adds gaps between client windows. It is similar to gaps, but contains additional functionality.
 - swallow patch: if a program run from a terminal would make it inoperable, it temporarily takes its place to save space.
 
 

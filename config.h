@@ -2,6 +2,7 @@
 
 /* constant(s) */
 #define TERMINAL "st"
+#define TERMCLASS "St"
 
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
@@ -34,7 +35,7 @@ static const Rule rules[] = {
 	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
 	{ "Gimp",    NULL,     NULL,           0,         1,          0,           0,        -1 },
 	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
-	{ "St",      NULL,     NULL,           0,         0,          1,           0,        -1 },
+	{ TERMCLASS, NULL,     NULL,           0,         0,          1,           0,        -1 },
 	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
 };
 
@@ -85,6 +86,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_w,      			spawn,          	SHCMD("$BROWSER") },
 	{ MODKEY,                       XK_r,      			spawn,          	SHCMD(TERMINAL " -e lf") },
 	{ MODKEY|ShiftMask,		XK_r,      			spawn,          	SHCMD(TERMINAL " -e htop") },
+	{ MODKEY|ShiftMask,		XK_r,      			spawn,          	SHCMD(TERMINAL " -e newsboat") },
 	{ MODKEY,             		XK_Return, 			spawn,          	{.v = termcmd } },
 	{ MODKEY,                       XK_b,     	 		togglebar,      	{0} },
 	{ MODKEY,                       XK_j,     			focusstack,     	{.i = +1 } },
@@ -114,7 +116,9 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_j,     			movestack,      	{.i = +1 } },
 	{ MODKEY,                       XK_z,  				setgaps,        	{.i = -1 } },
 	{ MODKEY,                       XK_x,  				setgaps,        	{.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_a,  			setgaps,        	{.i = 0  } },
+	{ MODKEY|ShiftMask,             XK_a,  				setgaps,        	{.i = 0  } },
+	{ Mod1Mask|ShiftMask,           XK_3,  				spawn,        		SHCMD("scrotFull") },
+	{ Mod1Mask|ShiftMask,           XK_4,  				spawn,        		SHCMD("scrotSection") },
 	{ 0, 				XF86XK_AudioMute,		spawn,			SHCMD("amixer -q sset Master toggle") },
 	{ 0, 				XF86XK_AudioRaiseVolume,	spawn,			SHCMD("amixer -q sset Master 5%+") },
 	{ 0, 				XF86XK_AudioLowerVolume,	spawn,			SHCMD("amixer -q sset Master 5%-") },

@@ -24,6 +24,20 @@ static const char *colors[][3]      = {
 	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
 };
 
+typedef struct {
+	const char *name;
+	const void *cmd;
+} Sp;
+const char *spcmd1[] = {"st", "-n", "spterm", "-g", "120x34", NULL };
+const char *spcmd2[] = {"st", "-n", "spfm", "-g", "120x34", "-e", "lf", NULL };
+const char *spcmd3[] = {"keepassxc", NULL };
+static Sp scratchpads[] = {
+	/* name          cmd  */
+	{"spterm",      spcmd1},
+	{"spranger",    spcmd2},
+	{"keepassxc",   spcmd3},
+};
+
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
@@ -32,12 +46,14 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor	scratchkey */
-	{ "Gimp",    NULL,     NULL,           0,         1,          0,           0,        -1,	0 },
-	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1,	0 },
-	{ TERMCLASS, NULL,     NULL,           0,         0,          1,           0,        -1,	0 },
-	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1,	0 }, /* xev */
-	{ NULL,      NULL,     "scratchpad",   0,         1,          -1,          0,        -1,	's' },
+	/* class    instance      title       	 tags mask    isfloating   isterminal  noswallow  monitor */
+	{ "Gimp",     NULL,       NULL,       	    1 << 8,       0,           0,         0,        -1 },
+	{ "Firefox",  NULL,	  NULL,	            1 << 8,       0,	       0,	  0,        -1 },
+	{ TERMCLASS,  NULL,       NULL,       	    0,            0,           1,         0,        -1 },
+	{ NULL,       NULL,       "Event Tester",   0,            0,           0,         1,        -1 },
+	{ NULL,      "spterm",    NULL,       	    SPTAG(0),     1,           1,         0,        -1 },
+	{ NULL,      "spcalc",    NULL,       	    SPTAG(1),     1,           1,         0,        -1 },
+	{ NULL,	     "keepassxc", NULL,		    SPTAG(2),  	  0,	       0,	  0,        -1 },
 };
 
 /* layout(s) */
@@ -67,10 +83,7 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "st", NULL };
-/*First arg only serves to match against key in rules*/
-static const char *scratchpadcmd[] = {"s", "st", "-t", "scratchpad", NULL}; 
 
-#include <X11/XF86keysym.h>
 #include "shiftview.c"
 #include "movestack.c"
 
@@ -89,7 +102,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_w,      			spawn,          	SHCMD("$BROWSER") },
 	{ MODKEY,                       XK_r,      			spawn,          	SHCMD(TERMINAL " -e lf") },
 	{ MODKEY|ShiftMask,		XK_r,      			spawn,          	SHCMD(TERMINAL " -e htop") },
-	{ MODKEY|ShiftMask,		XK_r,      			spawn,          	SHCMD(TERMINAL " -e newsboat") },
+	{ MODKEY|ShiftMask,		XK_n,      			spawn,          	SHCMD(TERMINAL " -e newsboat") },
 	{ MODKEY,             		XK_Return, 			spawn,          	{.v = termcmd } },
 	{ MODKEY,                       XK_b,     	 		togglebar,      	{0} },
 	{ MODKEY,                       XK_j,     			focusstack,     	{.i = +1 } },
@@ -100,14 +113,16 @@ static Key keys[] = {
 	{ MODKEY,                       XK_l,      			setmfact,       	{.f = +0.05} },
 	{ MODKEY,                       XK_Return, 			zoom,           	{0} },
 	{ MODKEY,             		XK_q,      			killclient,     	{0} },
-	{ MODKEY,                       XK_t,      			setlayout,      	{.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,      			setlayout,      	{.v = &layouts[1]} },
-	{ MODKEY,                       XK_m,      			setlayout,      	{.v = &layouts[2]} },
+	{ MODKEY,             		XK_t,      			setlayout,      	{.v = &layouts[0]} },
+	{ MODKEY,             		XK_f,      			setlayout,      	{.v = &layouts[1]} },
+	{ MODKEY,             		XK_m,      			setlayout,      	{.v = &layouts[2]} },
 	{ MODKEY,                       XK_space,  			setlayout,      	{0} },
 	{ MODKEY|ShiftMask,             XK_space,  			togglefloating, 	{0} },
 	{ MODKEY,                       XK_s,      			togglesticky,   	{0} },
 	{ MODKEY|ShiftMask,             XK_f,      			togglefullscr,  	{0} },
-	{ MODKEY,                       XK_grave,  			togglescratch,  	{.v = scratchpadcmd } },
+	{ MODKEY|ShiftMask,            	XK_Return,  	   		togglescratch,  	{.ui = 0 } },
+	{ MODKEY|ShiftMask,            	XK_apostrophe,	   		togglescratch,  	{.ui = 1 } },
+	{ MODKEY|ShiftMask,            	XK_v,	   			togglescratch,  	{.ui = 2 } },
 	{ MODKEY,                       XK_0,      			view,           	{.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      			tag,            	{.ui = ~0 } },
 	{ MODKEY,                       XK_comma,  			focusmon,       	{.i = -1 } },

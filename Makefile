@@ -48,4 +48,5 @@ uninstall:
 	rm -f ${DESTDIR}${PREFIX}/bin/dwm\
 		${DESTDIR}${MANPREFIX}/man1/dwm.1
 
+.DEFAULT_GOAL := install
 .PHONY: all options clean dist install uninstall

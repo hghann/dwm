@@ -3,6 +3,20 @@
 dwm is an extremely fast, small, and dynamic window manager for X.
 
 
+## Patches and features
+
+- swallow: if a program run from a terminal would make it inoperable, it temporarily takes its place to save space.
+- scratchpads: allows for multiple different scratchpad windows assigned to different keybinds
+- sticky: easily make a client visible on all tags (make it "sticky").
+- movestack: move windows up and down in the master and stack layout.
+- shiftview: function to shift current view left/right.
+- actualfullscreen: actually toggle fullscreen instead of hiding the bar and entering monocle layout.
+- fullgaps: adds gaps between client windows. Similar to gaps, but contains additional functionality.
+- autostart: runs dwmblocks on startup
+- hide_vacant_tags: hides vacant tags
+- statuscmd: clickable bar
+
+
 ## Requirements
 
 In order to build dwm you need the Xlib header files.
@@ -55,18 +69,6 @@ exec dwm
 
 The configuration of dwm is done by creating a custom config.h
 and (re)compiling the source code.
-
-
-## Patches and features
-
-- swallow: if a program run from a terminal would make it inoperable, it temporarily takes its place to save space.
-- scratchpads: allows for multiple different scratchpad windows assigned to different keybinds
-- sticky: easily make a client visible on all tags (make it "sticky").
-- movestack: move windows up and down in the master and stack layout.
-- shiftview: function to shift current view left/right.
-- actualfullscreen: actually toggle fullscreen instead of hiding the bar and entering monocle layout.
-- fullgaps: adds gaps between client windows. Similar to gaps, but contains additional functionality.
-- autostart: runs dwmblocks on startup
 
 
 ## Notes

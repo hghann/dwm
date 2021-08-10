@@ -12,18 +12,12 @@ static const int swallowfloating    = 0;        /* 1 means swallow floating wind
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "monospace:size=10", "JoyPixels:pixelsize=12:antialias=true:autohint=true" };
-/* static const char *fonts[]          = {"Mononoki Nerd Font:size=9:antialias=true:autohint=true",
-                                        "Hack:size=8:antialias=true:autohint=true",
-                                        "JoyPixels:size=10:antialias=true:autohint=true"
-                                      }; */
 static const char dmenufont[]       = "monospace:size=10";
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
-//static const char col_cyan[]        = "#005577";
-//static const char col_cyan[]        = "#f59542";
-static const char col_cyan[]        = "#74438f";
+static const char col_cyan[]        = "#f59542"; /* blue #005577; orange #f595242; magenta #74438f*/
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
@@ -52,14 +46,14 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class    instance      title       	 tags mask    isfloating   isterminal  noswallow  monitor */
-	{ "Gimp",     NULL,       NULL,       	    1 << 8,       0,           0,         0,        -1 },
-	{ "Firefox",  NULL,	  NULL,	            1 << 8,       0,	       0,	  0,        -1 },
-	{ TERMCLASS,  NULL,       NULL,       	    0,            0,           1,         0,        -1 },
+	/* class    instance      title          tags mask    isfloating   isterminal  noswallow  monitor */
+	{ "Gimp",     NULL,       NULL,             1 << 8,       0,           0,         0,        -1 },
+	{ "Firefox",  NULL,       NULL,             1 << 8,       0,           0,         0,        -1 },
+	{ TERMCLASS,  NULL,       NULL,             0,            0,           1,         0,        -1 },
 	{ NULL,       NULL,       "Event Tester",   0,            0,           0,         1,        -1 },
-	{ NULL,      "spterm",    NULL,       	    SPTAG(0),     1,           1,         0,        -1 },
-	{ NULL,      "spcalc",    NULL,       	    SPTAG(1),     1,           1,         0,        -1 },
-	{ NULL,	     "keepassxc", NULL,		    SPTAG(2),  	  0,	       0,	  0,        -1 },
+	{ NULL,      "spterm",    NULL,             SPTAG(0),     1,           1,         0,        -1 },
+	{ NULL,      "spcalc",    NULL,             SPTAG(1),     1,           1,         0,        -1 },
+	{ NULL,      "keepassxc", NULL,             SPTAG(2),     0,           0,         0,        -1 },
 };
 
 /* layout(s) */
@@ -92,7 +86,6 @@ static const char *termcmd[]  = { "st", NULL };
 
 #include "shiftview.c"
 #include "movestack.c"
-
 static Key keys[] = {
 	/* modifier                     key                 function            argument */
 	TAGKEYS(                        XK_1,                                   0)
@@ -106,8 +99,11 @@ static Key keys[] = {
 	TAGKEYS(                        XK_9,                                   8)
 	{ MODKEY,                       XK_d,               spawn,              SHCMD("dmenu_run") },
 	{ MODKEY,                       XK_w,               spawn,              SHCMD("$BROWSER") },
-	{ MODKEY,                       XK_r,               spawn,              SHCMD(TERMINAL " -e lf") },
+	{ MODKEY,                       XK_r,               spawn,              SHCMD(TERMINAL " -e /usr/local/bin/lfrun") },
+	{ MODKEY,                       XK_e,               spawn,              SHCMD("~/.local/bin/dmenuunicode") },
 	{ MODKEY|ShiftMask,             XK_r,               spawn,              SHCMD(TERMINAL " -e htop") },
+	{ MODKEY,                       XK_n,               spawn,              SHCMD(TERMINAL " -e nmtui") },
+	//{ MODKEY,                       XK_n,               spawn,              SHCMD("~/.local/bin/dmenunetworkmanager") },
 	{ MODKEY|ShiftMask,             XK_n,               spawn,              SHCMD(TERMINAL " -e newsboat") },
 	{ MODKEY,                       XK_Return,          spawn,              {.v = termcmd } },
 	{ MODKEY,                       XK_b,               togglebar,          {0} },
@@ -135,8 +131,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_period,          focusmon,           {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,           tagmon,             {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period,          tagmon,             {.i = +1 } },
-	{ MODKEY,                       XK_semicolon,       shiftview,          {.i = -1 } },
-	{ MODKEY,                       XK_apostrophe,      shiftview,          {.i = +1 } },
+	{ MODKEY,                       XK_minus,       shiftview,          {.i = -1 } },
+	{ MODKEY,                       XK_equal,      shiftview,          {.i = +1 } },
 	{ MODKEY,                       XK_backslash,       view,               {0} },
 	{ MODKEY,                       XK_Tab,             view,               {0} },
 	{ MODKEY|ShiftMask,             XK_k,               movestack,          {.i = -1 } },
@@ -146,14 +142,14 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_a,               setgaps,            {.i = 0  } },
 	{ Mod1Mask|ShiftMask,           XK_3,               spawn,              SHCMD("scrotFull") },
 	{ Mod1Mask|ShiftMask,           XK_4,               spawn,              SHCMD("scrotSection") },
-	{ 0,                        XF86XK_AudioMute,       spawn,              SHCMD("amixer -q sset Master toggle; kill -44 $(pidof dwmblocks)") },
-	{ 0,                    XF86XK_AudioRaiseVolume,    spawn,              SHCMD("amixer -q sset Master 5%+; kill -44 $(pidof dwmblocks)") },
-	{ 0,                    XF86XK_AudioLowerVolume,    spawn,              SHCMD("amixer -q sset Master 5%-; kill -44 $(pidof dwmblocks)") },
-	{ 0,                    XF86XK_MonBrightnessUp,     spawn,              SHCMD("xbacklight -inc 5") },
-	{ 0,                    XF86XK_MonBrightnessDown,   spawn,              SHCMD("xbacklight -dec 5") },
-	{ 0,                    XF86XK_KbdBrightnessUp,     spawn,              SHCMD("keyNitsInc") },
-	{ 0,                    XF86XK_KbdBrightnessDown,   spawn,              SHCMD("keyNitsDec") },
-	{ MODKEY|ShiftMask,             XK_q,               quit,               {0} },
+	{ 0, XF86XK_AudioMute,                              spawn,              SHCMD("amixer -q sset Master toggle; kill -44 $(pidof dwmblocks)") },
+	{ 0, XF86XK_AudioRaiseVolume,                       spawn,              SHCMD("amixer -q sset Master 5%+; kill -44 $(pidof dwmblocks)") },
+	{ 0, XF86XK_AudioLowerVolume,                       spawn,              SHCMD("amixer -q sset Master 5%-; kill -44 $(pidof dwmblocks)") },
+	{ 0, XF86XK_MonBrightnessUp,                        spawn,              SHCMD("xbacklight -inc 5") },
+	{ 0, XF86XK_MonBrightnessDown,                      spawn,              SHCMD("xbacklight -dec 5") },
+	{ 0, XF86XK_KbdBrightnessUp,                        spawn,              SHCMD("keyNitsInc") },
+	{ 0, XF86XK_KbdBrightnessDown,                      spawn,              SHCMD("keyNitsDec") },
+	{ MODKEY|ControlMask|ShiftMask, XK_q,               quit,               {0} },
 };
 
 /* button definitions */
@@ -169,7 +165,7 @@ static Button buttons[] = {
 	{ ClkStatusText,        0,              Button5,        sigdwmblocks,   {.i = 5} },
 	{ ClkStatusText,        ShiftMask,      Button1,        sigdwmblocks,   {.i = 6} },
 #endif
-	{ ClkStatusText,        ShiftMask,      Button3,        spawn,          SHCMD(TERMINAL " -e vim ~/.suckless/dwmblocks/config.h") },
+	{ ClkStatusText,        ShiftMask,      Button3,        spawn,          SHCMD(TERMINAL " -e vim ~/.local/src/dwmblocks/config.h") },
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },

@@ -13,7 +13,7 @@ dwm is an extremely fast, small, and dynamic window manager for X.
 - actualfullscreen: actually toggle fullscreen instead of hiding the bar and entering monocle layout.
 - fullgaps: adds gaps between client windows. Similar to gaps, but contains additional functionality.
 - autostart: runs dwmblocks on startup
-- hide_vacant_tags: hides vacant tags
+- hidevacanttags: hides vacant tags
 - statuscmd: clickable bar
 
 

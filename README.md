@@ -5,16 +5,16 @@ dwm is an extremely fast, small, and dynamic window manager for X.
 
 ## Patches and features
 
-- swallow: if a program run from a terminal would make it inoperable, it temporarily takes its place to save space.
-- scratchpads: allows for multiple different scratchpad windows assigned to different keybinds
+- swallow: programs run from a terminal make it inoperable; it temporarily takes its place to save space.
 - sticky: easily make a client visible on all tags (make it "sticky").
 - movestack: move windows up and down in the master and stack layout.
 - shiftview: function to shift current view left/right.
-- actualfullscreen: actually toggle fullscreen instead of hiding the bar and entering monocle layout.
 - fullgaps: adds gaps between client windows. Similar to gaps, but contains additional functionality.
-- autostart: runs dwmblocks on startup
-- hidevacanttags: hides vacant tags
-- statuscmd: clickable bar
+- autostart: runs dwmblocks on startup.
+- statuscmd: adds the ability to signal dwmblocks the location and button when clicking on the status bar.
+- scratchpads: allows for multiple different scratchpad windows assigned to different keybinds
+- hide vacant tags: prevents dwm from drawing tags with no clients (i.e. vacant) on the bar.
+- actualfullscreen: actually toggle fullscreen instead of hiding the bar and entering monocle layout.
 
 
 ## Requirements

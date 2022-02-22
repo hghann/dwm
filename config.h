@@ -47,13 +47,14 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class    instance      title          tags mask    isfloating   isterminal  noswallow  monitor */
-	{ "Gimp",     NULL,       NULL,             1 << 8,       0,           0,         0,        -1 },
-	{ "Firefox",  NULL,       NULL,             1 << 8,       0,           0,         0,        -1 },
-	{ TERMCLASS,  NULL,       NULL,             0,            0,           1,         0,        -1 },
-	{ NULL,       NULL,       "Event Tester",   0,            0,           0,         1,        -1 },
-	{ NULL,      "spterm",    NULL,             SPTAG(0),     1,           1,         0,        -1 },
-	{ NULL,      "spcalc",    NULL,             SPTAG(1),     1,           1,         0,        -1 },
-	{ NULL,      "keepassxc", NULL,             SPTAG(2),     0,           0,         0,        -1 },
+	{ "Gimp",       NULL,       NULL,             1 << 8,       0,           0,         0,        -1 },
+	{ "Librewolf",  NULL,       NULL,             1 << 8,       0,           0,         0,        -1 },
+	{ "Firefox",    NULL,       NULL,             1 << 8,       0,           0,         0,        -1 },
+	{ TERMCLASS,    NULL,       NULL,             0,            0,           1,         0,        -1 },
+	{ NULL,         NULL,       "Event Tester",   0,            0,           0,         1,        -1 },
+	{ NULL,      "spterm",      NULL,             SPTAG(0),     1,           1,         0,        -1 },
+	{ NULL,      "spcalc",      NULL,             SPTAG(1),     1,           1,         0,        -1 },
+	{ NULL,      "keepassxc",   NULL,             SPTAG(2),     0,           0,         0,        -1 },
 };
 
 /* layout(s) */
@@ -131,8 +132,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_period,          focusmon,           {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,           tagmon,             {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period,          tagmon,             {.i = +1 } },
-	{ MODKEY,                       XK_minus,       shiftview,          {.i = -1 } },
-	{ MODKEY,                       XK_equal,      shiftview,          {.i = +1 } },
+	{ MODKEY,                       XK_minus,           shiftview,          {.i = -1 } },
+	{ MODKEY,                       XK_equal,           shiftview,          {.i = +1 } },
 	{ MODKEY,                       XK_backslash,       view,               {0} },
 	{ MODKEY,                       XK_Tab,             view,               {0} },
 	{ MODKEY|ShiftMask,             XK_k,               movestack,          {.i = -1 } },

@@ -31,7 +31,7 @@ Afterwards enter the following command to build and install dwm (if
 necessary as root):
 
 ```
-git clone https://github.com/worthyox/dwm
+git clone https://github.com/hghann/dwm
 cd dwm
 sudo make clean install
 ```

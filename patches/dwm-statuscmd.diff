@@ -1,0 +1,132 @@
+From f58c7e4fd05ec13383518ccd51663167d45e92d0 Mon Sep 17 00:00:00 2001
+From: Daniel Bylinka <daniel.bylinka@gmail.com>
+Date: Fri, 2 Apr 2021 19:02:58 +0200
+Subject: [PATCH] [statuscmd] Signal mouse button and click location to status
+ monitor
+
+---
+ config.def.h |   6 +++-
+ dwm.c        | 100 ++++++++++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 100 insertions(+), 6 deletions(-)
+
+diff --git a/config.def.h b/config.def.h
+index 1c0b587..154a59b 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -54,6 +54,8 @@ static const Layout layouts[] = {
+ /* helper for spawning shell commands in the pre dwm-5.0 fashion */
+ #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
+ 
++#define STATUSBAR "dwmblocks"
++
+ /* commands */
+ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
+ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+@@ -103,7 +105,9 @@ static Button buttons[] = {
+ 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
+ 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
+ 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
+-	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
++	{ ClkStatusText,        0,              Button1,        sigstatusbar,   {.i = 1} },
++	{ ClkStatusText,        0,              Button2,        sigstatusbar,   {.i = 2} },
++	{ ClkStatusText,        0,              Button3,        sigstatusbar,   {.i = 3} },
+ 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
+ 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
+ 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
+diff --git a/dwm.c b/dwm.c
+index b0b3466..d871457 100644
+--- a/dwm.c
++++ b/dwm.c
+@ -206,6 +207,7 @@ static void setup(void);
+ static void seturgent(Client *c, int urg);
+ static void showhide(Client *c);
+ static void sigchld(int unused);
++ifndef __OpenBSD__
++static int getdwmblockspid();
++static void sigdwmblocks(const Arg *arg);
++endif
+ static void spawn(const Arg *arg);
+ static void tag(const Arg *arg);
+ static void tagmon(const Arg *arg);
+@@ -238,6 +240,9 @@ static void zoom(const Arg *arg);
+ /* variables */
+ static const char broken[] = "broken";
+ static char stext[256];
++static int dwmblockssig;
++pid_t dwmblockspid = 0;
+ static int screen;
+ static int sw, sh;           /* X display screen geometry width, height */
+ static int bh, blw = 0;      /* bar geometry */
+@@ -704,9 +724,24 @@ drawbar(Monitor *m)
+	for (c = m->clients; c; c = c->next) {
+-		occ |= c->tags;
++		occ |= c->tags == 255 ? 0 : c->tags;
+
+	for (i = 0; i < LENGTH(tags); i++) {
+-		w = TEXTW(tags[i]);
+-		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
+-		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
+-		if (occ & 1 << i)
+-			drw_rect(drw, x + boxs, boxs, boxw, boxw,
+-				m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
+-				urg & 1 << i);
+-		x += w;
+-	}
++		/* do not draw vacant tags */
++		if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
++		continue;
++
++		w = TEXTW(tags[i]);
++		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
++		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
++		x += w;
++	}
+	w = blw = TEXTW(m->ltsymbol);
+	drw_setscheme(drw, scheme[SchemeNorm]);
+	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
+@@ -872,6 +907,30 @@ getatomprop(Client *c, Atom prop)
+ 	return atom;
+ }
+ 
++#ifndef __OpenBSD__
++int
++getdwmblockspid()
++{
++	char buf[16];
++	FILE *fp = popen("pidof -s dwmblocks", "r");
++	fgets(buf, sizeof(buf), fp);
++	pid_t pid = strtoul(buf, NULL, 10);
++	pclose(fp);
++	dwmblockspid = pid;
++	return pid ! = 0 ? 0 : -1;
++}
++#endif
+
+ int
+ getrootptr(int *x, int *y)
+ {
+@@ -1637,6 +1696,20 @@ sigchld(int unused)
+ 	while (0 < waitpid(-1, NULL, WNOHANG));
+ }
+ 
++#ifndef __OpenBSD__
++void
++sigdwmblocks(const Arg *arg)
++{
++	union sigval sv;
++	sv.sival_int = 0 | (dwmblockssig << 8) | arg->i;
++	if (!dwmblockspid)
++		if (getdwmblockspid() == -1)
++			return;
++
++	if (sigqueue(dwmblockspid, SIGUSR1, sv) == -1) {
++		if (errno == ESRCH) {
++			if (!getdwmblockspid())
++				sigqueue(dwmblockspid, SIGUSR1, sv);
++		}
++	}
++}
++#endif
+
+2.31.0
+
